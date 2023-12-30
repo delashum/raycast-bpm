@@ -98,6 +98,7 @@ export default function Command() {
   );
 }
 
+/** A Queue for timestamped beats */
 class BeatQueue {
   public onReset?: (queue: BeatQueue) => void;
 
@@ -114,6 +115,7 @@ class BeatQueue {
     this.reset();
   }
 
+  /** Perform a beat timestamped to right now */
   public beat() {
     const lastTS = this.queue[this.last]?.ts;
     const nowTS = performance.now();
@@ -151,10 +153,12 @@ class BeatQueue {
     return this;
   }
 
+  /** Calculate the current BPM of the queue. Will be 0 if no beats have been added */
   public get bpm() {
     return this.latestBPM || this.lastStableBPM;
   }
 
+  /** The queue status. See @BeatQueueState type for more info */
   public get state(): BeatQueueState {
     if (this.latestBPM > 0) {
       if (this.count < QUEUE_SIZE) {
@@ -173,6 +177,7 @@ class BeatQueue {
     }
   }
 
+  /** Reset the queue to it's initial state */
   public reset() {
     this.queue = new Array(QUEUE_SIZE);
     this.next = 0;
@@ -183,10 +188,14 @@ class BeatQueue {
   }
 }
 
-const QUEUE_SIZE = 6;
-const QUEUE_TIMEOUT = 1200;
-const BEAT_STEADINESS = 20;
+/** One minute in milliseconds */
 const ONE_MINUTE = 1000 * 60;
+/** How many beats should be kept in the queue */
+const QUEUE_SIZE = 6;
+/** After how many milliseconds without a beat should the queue reset */
+const QUEUE_TIMEOUT = 1200;
+/** How much variation is allowed between beats to be considered steady */
+const BEAT_STEADINESS = 20;
 
 type Beat = {
   ts: number;
@@ -194,11 +203,11 @@ type Beat = {
 };
 
 type BeatQueueState =
-  // Initial state when the command is run
+  // The queue is empty and ready to receive beats
   | "initial"
   // During the first few beats where there's not enough data to be accurate but we still show an estimate
   | "calculating"
-  // The beta has been fairly stable
+  // The beat has been fairly stable
   | "stable"
   // The beat is changing from one bpm to another
   | "unstable"
