@@ -54,7 +54,7 @@ export default function Command() {
       message = `${queue.bpm.toFixed()} BPM`;
       color = Color.SecondaryText;
       subtitle = "Steady…";
-      loading = false;
+      loading = true;
       break;
     case "result":
       message = `${queue.bpm.toFixed()} BPM`;
